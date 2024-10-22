@@ -1,0 +1,13 @@
+.idea
+.DS_Store
+# configs
+.env
+app.env
+server.crt
+server.key
+# packages & modules
+/src/assets/node_modules
+/src/vendor
+# buildable assets
+**/app.min.js
+**/app.css

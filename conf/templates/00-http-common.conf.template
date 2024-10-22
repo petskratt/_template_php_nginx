@@ -1,0 +1,70 @@
+# Common setting inside http, before server blocks
+# pets@tehnokratt.net / 2024-10-18
+
+map $upstream_response_time $upstream_response_time_num {
+  default $upstream_response_time;
+  ""      0.000;
+}
+map $remote_port $remote_port_num {
+  default $remote_port;
+  ""      0;
+}
+map $fastcgi_script_name $fpm {
+    default	0;
+    ~*\.php$	1;
+}
+
+# iso8601 with milliseconds: https://thatsamguy.com/nginx-iso8601-time-format/
+# Note: $request_start and $request_start_iso8601 defined in server conf
+
+map $request_start_iso8601 $time_iso8601_p1 {
+    ~([^+]+) $1;
+}
+
+map $request_start_iso8601 $time_iso8601_p2 {
+    ~\+([0-9:]+)$ $1;
+}
+
+map $request_start $millisec {
+    ~\.([0-9]+)$ $1;
+}
+
+log_format json_combined escape=json '{'
+#    '"timestamp": "$time_iso8601"'
+    '"timestamp": "$time_iso8601_p1.$millisec+$time_iso8601_p2"'
+#    ', "request_start": $request_start'
+#    ', "request_end": $msec'
+    ', "host": "$host"'
+    ', "hostname": "$hostname"'
+    ', "request_time": $request_time'
+    ', "remote_addr": "$remote_addr"'
+#    ', "remote_user": "$remote_user"'
+#    ', "remote_port": $remote_port_num'
+#    ', "server_protocol": "$server_protocol"'
+    ', "request_id": "$request_id"'
+    ', "request_method": "$request_method"'
+    ', "request_length": $request_length'
+    ', "request": "$request", '
+    ', "request_uri": "$request_uri"'
+    ', "uri": "$uri"'
+    ', "args": "$args"'
+    ', "status": $status'
+    ', "body_bytes_sent": $body_bytes_sent'
+    ', "content_type": "$sent_http_content_type"'
+    ', "fpm": $fpm'
+    ', "upstream_response_time": $upstream_response_time_num'
+    ', "upstream_status": "$upstream_status"'
+    ', "referrer": "$http_referer"'
+    ', "user_agent": "$http_user_agent"'
+    ', "x_forwarded_for": "$http_x_forwarded_for"'
+#    ', "request_body": "$request_body"'
+'}';
+
+access_log ${ACCESSLOG} json_combined;
+error_log ${ERRORLOG} ${LOGLEVEL};
+
+client_max_body_size    ${MAX_BODY_SIZE};
+keepalive_timeout       65;
+sendfile                on;
+server_tokens           off;
+root                    /var/www/html;

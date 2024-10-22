@@ -1,0 +1,41 @@
+name: ${BASENAME}
+services:
+  ingress:
+    image: nginxinc/nginx-unprivileged:stable-alpine
+    restart: always
+    container_name: ${BASENAME}-ingress
+    hostname: ${BASENAME}-ingress
+    ports:
+      - 443:8443
+      - 80:8080
+    env_file: ./conf/nginx.env
+    environment:
+      - BACKEND=${BASENAME}-app:9000
+    volumes:
+      - ./src:/var/www/html
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./conf/templates:/etc/nginx/templates
+      - ./conf/server.crt:/etc/nginx/ssl/server.crt
+      - ./conf/server.key:/etc/nginx/ssl/server.key
+    networks:
+      - public
+      - isolated
+
+  app:
+    image: ${BASENAME}-app
+    restart: always
+    container_name: ${BASENAME}-app
+    hostname: ${BASENAME}-app
+    env_file: ./conf/app.env
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - isolated
+#      - public # un-comment if it talks to world on purpose
+
+networks:
+  public:
+    driver: bridge
+  isolated:
+    driver: bridge
+    internal: true
