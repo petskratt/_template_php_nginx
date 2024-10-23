@@ -17,10 +17,10 @@ RUN pecl install yaml && docker-php-ext-enable yaml
 RUN apk del --purge build-deps
 RUN rm -rf /tmp/pear
 
-# copy app and conf
+# copy app and conf (fpm with zzz prefix to be executed last)
 ADD ./src /var/www/html
 ADD ./conf/app-php.ini /usr/local/etc/php/conf.d/app-php.ini
-ADD ./conf/app-fpm.conf /usr/local/etc/php-fpm.d/zz-app-fpm.conf
+ADD ./conf/app-fpm.conf /usr/local/etc/php-fpm.d/zzz-app-fpm.conf
 
 RUN chown -R www-data:www-data /var/www
 

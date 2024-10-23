@@ -22,7 +22,7 @@ Configuration can happen in 4 places (3 envs and `docker-compose.yml`):
 
 * Copy `.env.sample` to `.env`, change app name. This file can be also used to store secrets that are then mapped to
   app environment in `docker-compose.yml`.
-* Copy `conf/app.env.sample` to `conf/app.env` - app configuration (and possible secrets) go here.
+* Copy `app.env.sample` to `app.env` - app and ingress (nginx) configuration (and possibly secrets) go here.
 * Run `./build.sh` to build custom app image and generate selfsigned certs (used in local dev,
   as session cookie uses __Host prefix and needs TLS).
 * Run `docker compose up -d` to launch web frontend.
@@ -37,15 +37,14 @@ out.
 
 ```
 ├── .env.sample                           # Docker env (inc. app name used as prefix)
+├── app.env.sample                        # app and ingress (nginx) configuration
 ├── build.sh
 ├── Dockerfile
 ├── docker-compose.yml
 ├── README.md
 ├── conf
-│   ├── app.env.sample                    # app configuration
 │   ├── app-php.ini                       # app php.ini for secure configurarion
 │   ├── app-fpm.conf                      # app php-fpm configuration
-│   ├── nginx.env                         # nginx configuration variables
 │   ├── nginx.conf                        # nginx main conf file (moved logging to template)
 │   └── templates
 │       ├── 00-http-common.conf.template  # configuration blocks inside http

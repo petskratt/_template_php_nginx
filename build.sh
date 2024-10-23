@@ -7,7 +7,7 @@ source .env
 
 # install app dependencies
 #composer install --working-dir ./src
-npm install --prefix ./src/assets
+#npm install --prefix ./src/assets
 
 # generate selfsigned certs
 if [ ! -f ./conf/server.key ] || [ ! -f ./conf/server.crt ]; then

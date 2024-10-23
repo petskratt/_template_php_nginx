@@ -8,8 +8,9 @@ services:
     ports:
       - 443:8443
       - 80:8080
-    env_file: ./conf/nginx.env
+    env_file: ./app.env
     environment:
+    # using .env variables to define or override app.env
       - BACKEND=${BASENAME}-app:9000
     volumes:
       - ./src:/var/www/html
@@ -26,12 +27,13 @@ services:
     restart: always
     container_name: ${BASENAME}-app
     hostname: ${BASENAME}-app
-    env_file: ./conf/app.env
-    volumes:
-      - ./src:/var/www/html
+    env_file: ./app.env
+    # override src in image in dev
+    #volumes:
+    #  - ./src:/var/www/html
     networks:
       - isolated
-#      - public # un-comment if it talks to world on purpose
+    #  - public # un-comment if it talks to world on purpose
 
 networks:
   public:
